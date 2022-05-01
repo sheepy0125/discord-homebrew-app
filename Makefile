@@ -1,8 +1,8 @@
 # Project info
-CRATE_NAME := rust3ds-template
-PROG_NAME := Rust 3DS Template
-PROG_DESC := Rust, a modern, safe systems language.
-PROG_AUTHOR := You
+CRATE_NAME := rust3ds-discord
+PROG_NAME := Rust 3DS Discord
+PROG_DESC := Discord for the 3DS
+PROG_AUTHOR := sheepy0125
 PROG_ICON := $(DEVKITPRO)/libctru/default_icon.png
 
 3DSXTOOL := $(DEVKITPRO)/tools/bin/3dsxtool

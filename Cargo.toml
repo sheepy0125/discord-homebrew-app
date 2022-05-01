@@ -1,7 +1,7 @@
 [package]
-description = "Nintendo 3DS project template"
-name = "rust3ds-template"
-version = "0.1.0"
+description = "Nintendo 3DS Discord"
+name = "rust3ds-discord"
+version = "0.0.1"
 
 [dependencies]
 ctru-rs = { path = "../ctru-rs/ctru-rs" }
