@@ -8,7 +8,7 @@ ctru-rs = { path = "../ctru-rs/ctru-rs" }
 ctru-sys = { path = "../ctru-rs/ctru-sys" }
 
 [profile.dev]
-lto = true
+lto = false
 
 [profile.release]
-lto = true
+lto = false
