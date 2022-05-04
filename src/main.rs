@@ -1,18 +1,21 @@
 /// Discord for the 3DS
+/* Imports */
 extern crate ctru;
 extern crate ctru_sys as libctru;
 
 use ctru::applets::swkbd::{Button, Swkbd};
 use ctru::console::Console;
 use ctru::gfx::{Gfx, Screen};
-use ctru::services::apt::Apt;
-use ctru::services::hid::{Hid, KeyPad};
-use ctru::services::soc::Soc;
+use ctru::services::{
+    apt::Apt,
+    hid::{Hid, KeyPad},
+    soc::Soc,
+};
 
 use std::io::{Read, Write};
 use std::net::TcpStream;
 
-/// Constants
+/* Constants */
 const BUFFER_SIZE: usize = 1024 as usize;
 const TOP_SCREEN_COLS: u8 = 50;
 const BOTTOM_SCREEN_COLS: u8 = 40;
@@ -43,6 +46,7 @@ fn main() {
     let gfx = Gfx::default();
     let _console = Console::default();
     let mut message = String::new();
+    let mut proxy_ip = String::new();
 
     // The top screen will be used to show the messages
     let top_screen = Console::init(Screen::Top);
@@ -53,20 +57,31 @@ fn main() {
     welcome_message();
     border_line(BOTTOM_SCREEN_COLS);
 
-    top_screen.select();
-    border_line(TOP_SCREEN_COLS);
-    println!("Welcome to the Discord for the Nintendo 3DS!");
-    border_line(TOP_SCREEN_COLS);
-    bottom_screen.select();
-
-    // Connect to Discord
+    // Connect to Discord proxy
     println!("Connecting to Discord Proxy...");
     println!("Initializing network...");
+
+    // Get the IP address of the proxy
+    top_screen.select();
+    println!("Please enter the IP address of the Discord Proxy:");
+    let mut keyboard = Swkbd::default();
+    let mut text = String::new();
+    match keyboard.get_utf8(&mut text) {
+        Ok(Button::Right) => {
+            println!("IP address: {}", text);
+            proxy_ip.push_str(&text);
+        }
+        Ok(Button::Left) => println!("Cancelled"),
+        Ok(Button::Middle) => println!("Cancelled"),
+        Err(e) => println!("Error getting text: {:?}", e),
+    }
+    top_screen.clear();
+    bottom_screen.select();
+
     match Soc::init() {
         Ok(_) => {
             println!("Successfully initialized Soc service");
-            let proxy_ip = "192.168.86.67:7000";
-            match TcpStream::connect(proxy_ip) {
+            match TcpStream::connect(proxy_ip.as_str()) {
                 Ok(mut stream) => {
                     println!("Success! Sending hello...");
                     const HELLO_MESSAGE: &[u8; 8] = b"HELLO3DS";
@@ -86,6 +101,12 @@ fn main() {
                         }
                         Err(e) => println!("Failed handshake: {}", e),
                     }
+
+                    top_screen.select();
+                    border_line(TOP_SCREEN_COLS);
+                    println!("Welcome to the Discord for the Nintendo 3DS!");
+                    border_line(TOP_SCREEN_COLS);
+                    bottom_screen.select();
 
                     while apt.main_loop() {
                         gfx.flush_buffers();
@@ -132,7 +153,7 @@ fn main() {
                         }
                         // Exit
                         if inputs.contains(KeyPad::KEY_START) {
-                            break;
+                            panic!("Exiting Discord for the 3DS! Press OK to exit.");
                         }
 
                         // Detect if there is a new message
