@@ -6,7 +6,6 @@ dist/
 *.o
 *.ll
 *.elf
-*.3dsx
 *.smdh
 *.lock
 !Cargo.lock
